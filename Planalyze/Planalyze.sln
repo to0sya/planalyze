@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Planalyze.API", "Planalyze.API\Planalyze.API.csproj", "{563FAA5B-1803-4F4F-949D-06C2CC43ED81}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Planalyze.Infrastructure", "Planalyze.Infrastructure\Planalyze.Infrastructure.csproj", "{2F791E07-9E38-45BB-9E67-74EBF799C3D4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Planalyze.Core", "Planalyze.Core\Planalyze.Core.csproj", "{C5321871-CE98-4512-B83C-1F4269472495}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Planalyze.Domain", "Planalyze.Domain\Planalyze.Domain.csproj", "{A0851E9B-CAA9-4404-9713-62EC70DA44F6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{563FAA5B-1803-4F4F-949D-06C2CC43ED81}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{563FAA5B-1803-4F4F-949D-06C2CC43ED81}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{563FAA5B-1803-4F4F-949D-06C2CC43ED81}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{563FAA5B-1803-4F4F-949D-06C2CC43ED81}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2F791E07-9E38-45BB-9E67-74EBF799C3D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2F791E07-9E38-45BB-9E67-74EBF799C3D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2F791E07-9E38-45BB-9E67-74EBF799C3D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2F791E07-9E38-45BB-9E67-74EBF799C3D4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C5321871-CE98-4512-B83C-1F4269472495}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C5321871-CE98-4512-B83C-1F4269472495}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C5321871-CE98-4512-B83C-1F4269472495}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C5321871-CE98-4512-B83C-1F4269472495}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A0851E9B-CAA9-4404-9713-62EC70DA44F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A0851E9B-CAA9-4404-9713-62EC70DA44F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A0851E9B-CAA9-4404-9713-62EC70DA44F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A0851E9B-CAA9-4404-9713-62EC70DA44F6}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

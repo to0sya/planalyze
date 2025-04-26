@@ -1,0 +1,6 @@
+@Planalyze.API_HostAddress = http://localhost:5056
+
+GET {{Planalyze.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
