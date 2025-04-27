@@ -1,0 +1,101 @@
+<div class="auth-container">
+  <div class="auth-card">
+    <div class="auth-header">
+      <h1 class="text-center">Planalyze</h1>
+      <h2 class="text-center">Create Account</h2>
+    </div>
+    
+    <div class="auth-body">
+      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+        <div class="form-group">
+          <label for="name">Full Name</label>
+          <input 
+            type="text" 
+            id="name" 
+            formControlName="name" 
+            class="form-control"
+            [ngClass]="{'is-invalid': submitted && f['name'].errors}"
+            placeholder="Enter your full name">
+          <div *ngIf="submitted && f['name'].errors" class="invalid-feedback">
+            <div *ngIf="f['name'].errors['required']">Full name is required</div>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input 
+            type="email" 
+            id="email" 
+            formControlName="email" 
+            class="form-control"
+            [ngClass]="{'is-invalid': submitted && f['email'].errors}"
+            placeholder="Enter your email">
+          <div *ngIf="submitted && f['email'].errors" class="invalid-feedback">
+            <div *ngIf="f['email'].errors['required']">Email is required</div>
+            <div *ngIf="f['email'].errors['email']">Enter a valid email</div>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input 
+            type="password" 
+            id="password" 
+            formControlName="password" 
+            class="form-control"
+            [ngClass]="{'is-invalid': submitted && f['password'].errors}"
+            placeholder="Create a password">
+          <div *ngIf="submitted && f['password'].errors" class="invalid-feedback">
+            <div *ngIf="f['password'].errors['required']">Password is required</div>
+            <div *ngIf="f['password'].errors['minlength']">Password must be at least 6 characters</div>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="confirmPassword">Confirm Password</label>
+          <input 
+            type="password" 
+            id="confirmPassword" 
+            formControlName="confirmPassword" 
+            class="form-control"
+            [ngClass]="{'is-invalid': submitted && f['confirmPassword'].errors}"
+            placeholder="Confirm your password">
+          <div *ngIf="submitted && f['confirmPassword'].errors" class="invalid-feedback">
+            <div *ngIf="f['confirmPassword'].errors['required']">Confirm Password is required</div>
+            <div *ngIf="f['confirmPassword'].errors['mustMatch']">Passwords must match</div>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <div class="form-check">
+            <input 
+              type="checkbox" 
+              id="terms" 
+              formControlName="termsAccepted" 
+              class="form-check-input"
+              [ngClass]="{'is-invalid': submitted && f['termsAccepted'].errors}">
+            <label class="form-check-label" for="terms">
+              I agree to the <a href="javascript:void(0)">Terms of Service</a> and <a href="javascript:void(0)">Privacy Policy</a>
+            </label>
+            <div *ngIf="submitted && f['termsAccepted'].errors" class="invalid-feedback">
+              <div *ngIf="f['termsAccepted'].errors['required']">You must accept the terms and conditions</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <button 
+            type="submit" 
+            class="btn btn-primary btn-block"
+            [disabled]="loading">
+            {{ loading ? 'Creating account...' : 'Create Account' }}
+          </button>
+        </div>
+      </form>
+    </div>
+    
+    <div class="auth-footer text-center">
+      <p>Already have an account? <a routerLink="/login">Login</a></p>
+    </div>
+  </div>
+</div>

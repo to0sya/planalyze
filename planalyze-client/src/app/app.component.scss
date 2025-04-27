@@ -1,0 +1,30 @@
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.auth-layout {
+  background: linear-gradient(135deg, #8253eb 0%, #6438b5 100%);
+}
+
+.main-content-wrapper {
+  display: flex;
+  flex: 1;
+}
+
+.with-sidebar {
+  padding-left: 250px;
+}
+
+.main-content {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+@media (max-width: 768px) {
+  .with-sidebar {
+    padding-left: 0;
+  }
+}

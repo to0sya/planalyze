@@ -1,0 +1,71 @@
+<div class="content-calendar">
+  <div class="page-header">
+    <h1>Content Calendar</h1>
+    <div class="action-buttons">
+      <button class="btn btn-primary mr-2" routerLink="/app/post/new">
+        <i class="fas fa-plus mr-1"></i> New Post
+      </button>
+      <button class="btn btn-outline-primary" routerLink="/app/story/new">
+        <i class="fas fa-plus mr-1"></i> New Story
+      </button>
+    </div>
+  </div>
+
+  <div class="calendar-controls">
+    <div class="calendar-nav">
+      <button class="btn btn-outline-primary btn-sm" (click)="previousMonth()">
+        <i class="fas fa-chevron-left"></i>
+      </button>
+      <h2 class="current-month">{{ currentMonthName }} {{ currentYear }}</h2>
+      <button class="btn btn-outline-primary btn-sm" (click)="nextMonth()">
+        <i class="fas fa-chevron-right"></i>
+      </button>
+    </div>
+    <div class="view-options">
+      <button class="btn btn-outline-secondary btn-sm active">Month</button>
+      <button class="btn btn-outline-secondary btn-sm">Week</button>
+      <button class="btn btn-outline-secondary btn-sm">List</button>
+    </div>
+  </div>
+
+  <div class="calendar-grid">
+    <div class="calendar-header">
+      <div *ngFor="let day of weekDays" class="calendar-cell header-cell">
+        {{ day }}
+      </div>
+    </div>
+    
+    <div class="calendar-body">
+      <div *ngFor="let week of calendarDays" class="calendar-week">
+        <div *ngFor="let day of week" class="calendar-day" 
+             [ngClass]="{'current-month': day.currentMonth, 'today': day.isToday}">
+          <div class="day-header">
+            <span class="day-number">{{ day.date.getDate() }}</span>
+            <button *ngIf="day.currentMonth" class="add-content-btn" 
+                    (click)="openContentCreation(day.date)">
+              <i class="fas fa-plus"></i>
+            </button>
+          </div>
+          
+          <div class="day-content">
+            <div *ngFor="let post of getPostsForDate(day.date)" 
+                 class="content-item post-item"
+                 (click)="editPost(post.id)">
+              <div class="item-time">{{ formatTime(post.scheduledAt) }}</div>
+              <div class="item-title">{{ post.caption }}</div>
+              <div class="item-type">Post</div>
+            </div>
+            
+            <div *ngFor="let story of getStoriesForDate(day.date)" 
+                 class="content-item story-item"
+                 (click)="editStory(story.id)">
+              <div class="item-time">{{ formatTime(story.scheduledAt) }}</div>
+              <div class="item-title">{{ story.caption }}</div>
+              <div class="item-type">Story</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

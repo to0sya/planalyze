@@ -1,0 +1,26 @@
+<header class="app-header">
+  <div class="container">
+    <div class="header-content">
+      <div class="logo">
+        <h1><span class="text-primary">Planalyze</span></h1>
+      </div>
+      <div class="header-actions">
+        <div class="user-info" (click)="toggleUserMenu()" clickOutside (clickOutside)="userMenuOpen = false">
+          <div class="user-avatar">
+            <img alt="User avatar">
+          </div>
+          <span class="user-name">{{ userName }}</span>
+          <i class="fas fa-chevron-down"></i>
+          
+          <div class="user-menu" *ngIf="userMenuOpen">
+            <ul>
+              <li><a href="javascript:void(0)">Profile</a></li>
+              <li><a href="javascript:void(0)">Settings</a></li>
+              <li><a href="javascript:void(0)" (click)="logout()">Logout</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>

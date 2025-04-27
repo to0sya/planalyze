@@ -1,0 +1,204 @@
+<div class="post-editor">
+  <div class="page-header">
+    <h1>{{ isEditMode ? 'Edit Post' : 'New Post' }}</h1>
+    <div class="action-buttons">
+      <button class="btn btn-outline-secondary mr-2" (click)="navigateBack()">
+        Cancel
+      </button>
+      <button class="btn btn-primary" (click)="savePost()">
+        Save {{ isEditMode ? 'Changes' : 'Post' }}
+      </button>
+    </div>
+  </div>
+  
+  <div class="editor-content">
+    <form [formGroup]="postForm">
+      <div class="row">
+        <div class="col-md-8">
+          <div class="card">
+            <div class="card-body">
+              <div class="form-group">
+                <label for="caption">Caption</label>
+                <textarea 
+                  id="caption" 
+                  formControlName="caption" 
+                  class="form-control" 
+                  rows="5"
+                  placeholder="Write your caption here..."></textarea>
+                <div *ngIf="submitted && f['caption'].errors" class="invalid-feedback">
+                  <div *ngIf="f['caption'].errors['required']">Caption is required</div>
+                </div>
+                <small class="text-muted">{{ f['caption'].value?.length || 0 }}/2200 characters</small>
+              </div>
+              
+              <div class="form-group">
+                <label for="mediaFiles">Media</label>
+                <div class="media-upload-area" (click)="fileInput.click()">
+                  <input
+                    type="file"
+                    #fileInput
+                    multiple
+                    accept="image/*,video/*"
+                    style="display: none"
+                    (change)="onFileSelected($event)"
+                  />
+                  
+                  <div *ngIf="!previewUrls.length" class="upload-placeholder">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <p>Click to upload photos or videos</p>
+                    <small>You can add up to 10 photos or videos</small>
+                  </div>
+                  
+                  <div *ngIf="previewUrls.length" class="media-previews">
+                    <div 
+                      *ngFor="let url of previewUrls; let i = index" 
+                      class="media-preview-item"
+                      [ngClass]="{'primary-media': i === 0}"
+                    >
+                      <img [src]="url" alt="Preview">
+                      <div class="media-actions">
+                        <button 
+                          type="button" 
+                          class="btn btn-sm btn-light"
+                          (click)="removeMedia(i, $event)">
+                          <i class="fas fa-times"></i>
+                        </button>
+                      </div>
+                    </div>
+                    
+                    <div *ngIf="previewUrls.length < 10" class="add-more-media" (click)="fileInput.click()">
+                      <i class="fas fa-plus"></i>
+                    </div>
+                  </div>
+                </div>
+                <div *ngIf="submitted && !previewUrls.length" class="invalid-feedback">
+                  At least one media item is required
+                </div>
+              </div>
+              
+              <div class="form-group">
+                <label for="location">Location</label>
+                <input 
+                  type="text"
+                  id="location"
+                  formControlName="location"
+                  class="form-control"
+                  placeholder="Add a location"
+                  (input)="searchLocations($event)"
+                />
+                <div *ngIf="locationSearchResults.length" class="location-search-results">
+                  <div 
+                    *ngFor="let location of locationSearchResults" 
+                    class="location-search-item"
+                    (click)="selectLocation(location)">
+                    {{ location.name }}
+                  </div>
+                </div>
+              </div>
+              
+              <div class="form-group">
+                <label for="hashtags">Hashtags</label>
+                <input 
+                  type="text"
+                  id="hashtags"
+                  formControlName="hashtags"
+                  class="form-control"
+                  placeholder="Add hashtags (separate with spaces)"
+                />
+                <small class="text-muted">Use relevant hashtags to increase your post's visibility</small>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-4">
+          <div class="card mb-4">
+            <div class="card-header">
+              <h5 class="card-title mb-0">Publishing</h5>
+            </div>
+            <div class="card-body">
+              <div class="form-group">
+                <label>When to publish</label>
+                <div class="publishing-options">
+                  <div class="form-check">
+                    <input 
+                      type="radio" 
+                      id="publishNow" 
+                      formControlName="publishingOption" 
+                      value="now" 
+                      class="form-check-input"
+                      (change)="onPublishingOptionChange('now')"
+                    />
+                    <label class="form-check-label" for="publishNow">Publish now</label>
+                  </div>
+                  <div class="form-check">
+                    <input 
+                      type="radio" 
+                      id="publishScheduled" 
+                      formControlName="publishingOption" 
+                      value="scheduled" 
+                      class="form-check-input"
+                      (change)="onPublishingOptionChange('scheduled')"
+                    />
+                    <label class="form-check-label" for="publishScheduled">Schedule for later</label>
+                  </div>
+                </div>
+              </div>
+              
+              <div *ngIf="f['publishingOption'].value === 'scheduled'" class="form-group">
+                <label for="scheduledDate">Date</label>
+                <input 
+                  type="date" 
+                  id="scheduledDate" 
+                  formControlName="scheduledDate" 
+                  class="form-control"
+                />
+              </div>
+              
+              <div *ngIf="f['publishingOption'].value === 'scheduled'" class="form-group">
+                <label for="scheduledTime">Time</label>
+                <input 
+                  type="time" 
+                  id="scheduledTime" 
+                  formControlName="scheduledTime" 
+                  class="form-control"
+                />
+              </div>
+            </div>
+          </div>
+          
+          <div class="card">
+            <div class="card-header">
+              <h5 class="card-title mb-0">Advanced Settings</h5>
+            </div>
+            <div class="card-body">
+              <div class="form-group">
+                <div class="form-check">
+                  <input 
+                    type="checkbox" 
+                    id="hideComments" 
+                    formControlName="hideComments" 
+                    class="form-check-input"
+                  />
+                  <label class="form-check-label" for="hideComments">Hide like and view counts</label>
+                </div>
+              </div>
+              
+              <div class="form-group">
+                <div class="form-check">
+                  <input 
+                    type="checkbox" 
+                    id="disableComments" 
+                    formControlName="disableComments" 
+                    class="form-check-input"
+                  />
+                  <label class="form-check-label" for="disableComments">Turn off commenting</label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

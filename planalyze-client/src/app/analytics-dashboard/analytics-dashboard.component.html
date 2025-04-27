@@ -1,0 +1,179 @@
+<div class="analytics-dashboard">
+  <div class="page-header">
+    <h1>Analytics Dashboard</h1>
+    <div class="date-range-selector">
+      <select [(ngModel)]="selectedDateRange" (change)="onDateRangeChange()" class="form-control">
+        <option value="7">Last 7 days</option>
+        <option value="30">Last 30 days</option>
+        <option value="90">Last 3 months</option>
+      </select>
+    </div>
+  </div>
+  
+  <div class="metrics-summary">
+    <div class="row">
+      <div class="col-md-3 col-sm-6">
+        <div class="metric-card">
+          <div class="metric-icon followers">
+            <i class="fas fa-users"></i>
+          </div>
+          <div class="metric-data">
+            <h3>{{ accountSummary.totalFollowers | number }}</h3>
+            <p>Followers</p>
+            <div class="metric-change" [ngClass]="{'positive': accountSummary.followerGrowth > 0, 'negative': accountSummary.followerGrowth < 0}">
+              <i class="fas" [ngClass]="{'fa-caret-up': accountSummary.followerGrowth > 0, 'fa-caret-down': accountSummary.followerGrowth < 0}"></i>
+              {{ accountSummary.followerGrowth | number: '1.1-1' }}%
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-3 col-sm-6">
+        <div class="metric-card">
+          <div class="metric-icon reach">
+            <i class="fas fa-eye"></i>
+          </div>
+          <div class="metric-data">
+            <h3>{{ accountSummary.totalReach | number }}</h3>
+            <p>Reach</p>
+            <div class="metric-change" [ngClass]="{'positive': accountSummary.reachGrowth > 0, 'negative': accountSummary.reachGrowth < 0}">
+              <i class="fas" [ngClass]="{'fa-caret-up': accountSummary.reachGrowth > 0, 'fa-caret-down': accountSummary.reachGrowth < 0}"></i>
+              {{ accountSummary.reachGrowth | number: '1.1-1' }}%
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-3 col-sm-6">
+        <div class="metric-card">
+          <div class="metric-icon impressions">
+            <i class="fas fa-chart-line"></i>
+          </div>
+          <div class="metric-data">
+            <h3>{{ accountSummary.totalImpressions | number }}</h3>
+            <p>Impressions</p>
+            <div class="metric-change" [ngClass]="{'positive': accountSummary.impressionsGrowth > 0, 'negative': accountSummary.impressionsGrowth < 0}">
+              <i class="fas" [ngClass]="{'fa-caret-up': accountSummary.impressionsGrowth > 0, 'fa-caret-down': accountSummary.impressionsGrowth < 0}"></i>
+              {{ accountSummary.impressionsGrowth | number: '1.1-1' }}%
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-3 col-sm-6">
+        <div class="metric-card">
+          <div class="metric-icon engagement">
+            <i class="fas fa-heart"></i>
+          </div>
+          <div class="metric-data">
+            <h3>{{ accountSummary.engagementRate | number: '1.1-1' }}%</h3>
+            <p>Engagement Rate</p>
+            <div class="metric-change" [ngClass]="{'positive': accountSummary.engagementGrowth > 0, 'negative': accountSummary.engagementGrowth < 0}">
+              <i class="fas" [ngClass]="{'fa-caret-up': accountSummary.engagementGrowth > 0, 'fa-caret-down': accountSummary.engagementGrowth < 0}"></i>
+              {{ accountSummary.engagementGrowth | number: '1.1-1' }}%
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="analytics-charts">
+    <div class="row">
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-header">
+            <h3>Follower Growth</h3>
+          </div>
+          <div class="card-body">
+            <canvas id="followerGrowthChart"></canvas>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-header">
+            <h3>Content Performance</h3>
+          </div>
+          <div class="card-body">
+            <canvas id="contentPerformanceChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="row mt-4">
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-header">
+            <h3>Audience Demographics</h3>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-6">
+                <canvas id="genderChart"></canvas>
+                <p class="text-center mt-2">Gender</p>
+              </div>
+              <div class="col-md-6">
+                <canvas id="ageChart"></canvas>
+                <p class="text-center mt-2">Age Groups</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-header">
+            <h3>Top Locations</h3>
+          </div>
+          <div class="card-body">
+            <div class="top-locations">
+              <div *ngFor="let location of topLocations" class="location-item">
+                <div class="location-name">{{ location.name }}</div>
+                <div class="location-bar-container">
+                  <div class="location-bar" [style.width.%]="location.percentage"></div>
+                  <div class="location-percentage">{{ location.percentage }}%</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="best-performing-content mt-4">
+    <h2>Best Performing Content</h2>
+    <div class="row">
+      <div *ngFor="let post of bestPosts" class="col-md-4 col-sm-6">
+        <div class="content-card">
+          <div class="content-thumbnail">
+            <img [src]="post.thumbnailUrl" alt="Post thumbnail">
+            <div class="content-type">{{ post.type }}</div>
+          </div>
+          <div class="content-details">
+            <div class="content-date">{{ post.date | date:'mediumDate' }}</div>
+            <!-- <div class="content-caption">{{ post.caption | truncate:60 }}</div> -->
+            <div class="content-metrics">
+              <div class="metric">
+                <i class="fas fa-heart"></i>
+                <span>{{ post.likes | number }}</span>
+              </div>
+              <div class="metric">
+                <i class="fas fa-comment"></i>
+                <span>{{ post.comments | number }}</span>
+              </div>
+              <div class="metric">
+                <i class="fas fa-share"></i>
+                <span>{{ post.shares | number }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

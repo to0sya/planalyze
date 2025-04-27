@@ -1,0 +1,310 @@
+<div class="ad-targeting">
+  <div class="page-header">
+    <h1>Ad Targeting Automation</h1>
+  </div>
+  
+  <div class="row">
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-header">
+          <h3>Targeting Presets</h3>
+        </div>
+        <div class="card-body">
+          <div class="preset-list">
+            <div 
+              *ngFor="let preset of targetingPresets" 
+              class="preset-item"
+              [ngClass]="{'active': selectedPresetId === preset.id}"
+              (click)="selectPreset(preset)">
+              <div class="preset-name">{{ preset.name }}</div>
+              <div class="preset-description">{{ preset.description }}</div>
+            </div>
+            
+            <button 
+              class="add-preset-btn"
+              (click)="createNewPreset()">
+              <i class="fas fa-plus"></i> Create New Preset
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-header">
+          <h3>{{ isEditMode ? 'Edit Targeting' : 'Create New Targeting' }}</h3>
+        </div>
+        <div class="card-body">
+          <form [formGroup]="targetingForm" >
+            <!-- (ngSubmit)="saveTargeting()" -->
+            <div class="form-group">
+              <label for="presetName">Preset Name</label>
+              <input 
+                type="text" 
+                id="presetName" 
+                formControlName="presetName" 
+                class="form-control"
+                [ngClass]="{'is-invalid': submitted && f['presetName'].errors}"
+              />
+              <div *ngIf="submitted && f['presetName'].errors" class="invalid-feedback">
+                <div *ngIf="f['presetName'].errors['required']">Preset name is required</div>
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="description">Description</label>
+              <textarea 
+                id="description" 
+                formControlName="description" 
+                class="form-control" 
+                rows="2"></textarea>
+            </div>
+            
+            <div class="targeting-sections">
+              <div class="section-header">
+                <h4>Audience</h4>
+              </div>
+              
+              <div class="form-group">
+                <label for="audienceSize">Estimated Audience Size</label>
+                <div class="audience-size-indicator">
+                  <div class="audience-bar">
+                    <div 
+                      class="audience-fill" 
+                     ></div>
+                     <!--  [ngClass]="getAudienceSizeClass()"
+                      [style.width.%]="getAudienceSizePercentage()" -->
+                  </div>
+                  <div class="audience-labels">
+                    <span>Too Narrow</span>
+                    <span>Defined</span>
+                    <span>Broad</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="form-group">
+                <label>Age Range</label>
+                <div class="age-range-selector">
+                  <select formControlName="ageMin" class="form-control">
+                    <option value="13">13</option>
+                    <option value="18">18</option>
+                    <option value="21">21</option>
+                    <option value="25">25</option>
+                    <option value="30">30</option>
+                    <option value="35">35</option>
+                    <option value="40">40</option>
+                    <option value="45">45</option>
+                    <option value="50">50</option>
+                    <option value="55">55</option>
+                    <option value="60">60</option>
+                    <option value="65">65+</option>
+                  </select>
+                  <span class="age-separator">to</span>
+                  <select formControlName="ageMax" class="form-control">
+                    <option value="17">17</option>
+                    <option value="20">20</option>
+                    <option value="24">24</option>
+                    <option value="29">29</option>
+                    <option value="34">34</option>
+                    <option value="39">39</option>
+                    <option value="44">44</option>
+                    <option value="49">49</option>
+                    <option value="54">54</option>
+                    <option value="59">59</option>
+                    <option value="64">64</option>
+                    <option value="65+">65+</option>
+                  </select>
+                </div>
+              </div>
+              
+              <div class="form-group">
+                <label>Gender</label>
+                <div class="gender-options">
+                  <div class="form-check form-check-inline">
+                    <input
+                      type="checkbox"
+                      id="genderAll"
+                      formControlName="genderAll"
+                      class="form-check-input"
+                    />
+                    <!-- 
+                      (change)="onGenderAllChange()" -->
+                    <label class="form-check-label" for="genderAll">All</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input
+                      type="checkbox"
+                      id="genderMale"
+                      formControlName="genderMale"
+                      class="form-check-input"
+                    />
+                    <!-- 
+                      (change)="updateGenderAll()" -->
+                    <label class="form-check-label" for="genderMale">Male</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input
+                      type="checkbox"
+                      id="genderFemale"
+                      formControlName="genderFemale"
+                      class="form-check-input"
+                    />
+                    <!-- 
+                      (change)="updateGenderAll()" -->
+                    <label class="form-check-label" for="genderFemale">Female</label>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="section-header">
+                <h4>Detailed Targeting</h4>
+              </div>
+              
+              <div class="form-group">
+                <label for="interests">Interests</label>
+                <div class="targeting-tags-input">
+                  <div class="targeting-tags">
+                    <div *ngFor="let interest of selectedInterests" class="targeting-tag">
+                      {{ interest }}
+                      <button type="button" >×</button>
+                      <!-- (click)="removeInterest(interest)" -->
+                    </div>
+                    <input
+                      type="text"
+                      id="interestInput"
+                      placeholder="Add interests..."
+                      [formControl]="interestInput"
+                    />
+                    <!-- 
+                      (keydown.enter)="addInterest($event)" -->
+                  </div>
+                </div>
+                <div *ngIf="interestSuggestions.length > 0" class="targeting-suggestions">
+                  <div 
+                    *ngFor="let suggestion of interestSuggestions" 
+                    class="suggestion-item">
+                    <!-- 
+                    (click)="selectInterestSuggestion(suggestion)" -->
+                    {{ suggestion }}
+                  </div>
+                </div>
+              </div>
+              
+              <div class="form-group">
+                <label for="behaviors">Behaviors</label>
+                <div class="targeting-tags-input">
+                  <div class="targeting-tags">
+                    <div *ngFor="let behavior of selectedBehaviors" class="targeting-tag">
+                      {{ behavior }}
+                      <button type="button" >×</button>
+                      <!-- (click)="removeBehavior(behavior)" -->
+                    </div>
+                    <input
+                      type="text"
+                      id="behaviorInput"
+                      placeholder="Add behaviors..."
+                      [formControl]="behaviorInput"
+                    />
+                    <!-- 
+                      (keydown.enter)="addBehavior($event)" -->
+                  </div>
+                </div>
+                <div *ngIf="behaviorSuggestions.length > 0" class="targeting-suggestions">
+                  <div 
+                    *ngFor="let suggestion of behaviorSuggestions" 
+                    class="suggestion-item">
+                    <!-- 
+                    (click)="selectBehaviorSuggestion(suggestion)" -->
+                    {{ suggestion }}
+                  </div>
+                </div>
+              </div>
+              
+              <div class="section-header">
+                <h4>Placements</h4>
+              </div>
+              
+              <div class="form-group">
+                <div class="form-check">
+                  <input
+                    type="checkbox"
+                    id="automaticPlacements"
+                    formControlName="automaticPlacements"
+                    class="form-check-input"
+                  />
+                  <!-- 
+                    (change)="onAutomaticPlacementsChange()" -->
+                  <label class="form-check-label" for="automaticPlacements">
+                    Automatic Placements (Recommended)
+                  </label>
+                </div>
+              </div>
+              
+              <div *ngIf="!f['automaticPlacements'].value" class="placement-options">
+                <div class="form-group">
+                  <label>Instagram Placements</label>
+                  <div class="form-check">
+                    <input
+                      type="checkbox"
+                      id="placementFeed"
+                      formControlName="placementFeed"
+                      class="form-check-input"
+                    />
+                    <label class="form-check-label" for="placementFeed">
+                      Feed
+                    </label>
+                  </div>
+                  <div class="form-check">
+                    <input
+                      type="checkbox"
+                      id="placementStories"
+                      formControlName="placementStories"
+                      class="form-check-input"
+                    />
+                    <label class="form-check-label" for="placementStories">
+                      Stories
+                    </label>
+                  </div>
+                  <div class="form-check">
+                    <input
+                      type="checkbox"
+                      id="placementExplore"
+                      formControlName="placementExplore"
+                      class="form-check-input"
+                    />
+                    <label class="form-check-label" for="placementExplore">
+                      Explore
+                    </label>
+                  </div>
+                  <div class="form-check">
+                    <input
+                      type="checkbox"
+                      id="placementReels"
+                      formControlName="placementReels"
+                      class="form-check-input"
+                    />
+                    <label class="form-check-label" for="placementReels">
+                      Reels
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="form-actions">
+              <button type="button" class="btn btn-outline-secondary mr-2" >
+                <!-- (click)="cancelEdit()" -->
+                Cancel
+              </button>
+              <button type="submit" class="btn btn-primary">
+                {{ isEditMode ? 'Update' : 'Save' }} Targeting Preset
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
