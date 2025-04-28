@@ -20,6 +20,7 @@
               <div class="form-group">
                 <label for="caption">Caption</label>
                 <textarea 
+                
                   id="caption" 
                   formControlName="caption" 
                   class="form-control" 
@@ -44,7 +45,7 @@
                   />
                   
                   <div *ngIf="!previewUrls.length" class="upload-placeholder">
-                    <i class="fas fa-cloud-upload-alt"></i>
+                    <i class="fa fa-cloud-upload-alt"></i>
                     <p>Click to upload photos or videos</p>
                     <small>You can add up to 10 photos or videos</small>
                   </div>
@@ -61,13 +62,13 @@
                           type="button" 
                           class="btn btn-sm btn-light"
                           (click)="removeMedia(i, $event)">
-                          <i class="fas fa-times"></i>
+                          <i class="fa fa-times"></i>
                         </button>
                       </div>
                     </div>
                     
                     <div *ngIf="previewUrls.length < 10" class="add-more-media" (click)="fileInput.click()">
-                      <i class="fas fa-plus"></i>
+                      <i class="fa fa-plus"></i>
                     </div>
                   </div>
                 </div>

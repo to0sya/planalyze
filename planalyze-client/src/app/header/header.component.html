@@ -1,16 +1,19 @@
 <header class="app-header">
   <div class="container">
     <div class="header-content">
-      <div class="logo">
-        <h1><span class="text-primary">Planalyze</span></h1>
+      <div class="logo-container" routerLink="/app/calendar">
+        <div class="logo-image">
+          <img src="assets/images/planalyze-logo.png" alt="Planalyze Logo">
+        </div>
+        <h1 class="app-title"><span class="text-primary">Planalyze</span></h1>
       </div>
       <div class="header-actions">
         <div class="user-info" (click)="toggleUserMenu()" clickOutside (clickOutside)="userMenuOpen = false">
           <div class="user-avatar">
-            <img alt="User avatar">
+            <img src="assets/images/avatar-placeholder.png" alt="User avatar">
           </div>
           <span class="user-name">{{ userName }}</span>
-          <i class="fas fa-chevron-down"></i>
+          <i class="fa fa-chevron-down"></i>
           
           <div class="user-menu" *ngIf="userMenuOpen">
             <ul>

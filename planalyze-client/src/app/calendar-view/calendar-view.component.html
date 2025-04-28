@@ -1,30 +1,27 @@
 <div class="content-calendar">
   <div class="page-header">
     <h1>Content Calendar</h1>
-    <div class="action-buttons">
-      <button class="btn btn-primary mr-2" routerLink="/app/post/new">
-        <i class="fas fa-plus mr-1"></i> New Post
-      </button>
-      <button class="btn btn-outline-primary" routerLink="/app/story/new">
-        <i class="fas fa-plus mr-1"></i> New Story
-      </button>
+    <div class="view-options">
+      <button class="btn btn-outline-secondary" [class.active]="currentView === 'month'" (click)="setView('month')">Month</button>
+      <button class="btn btn-outline-secondary" [class.active]="currentView === 'week'" (click)="setView('week')">Week</button>
+      <button class="btn btn-outline-secondary" [class.active]="currentView === 'list'" (click)="setView('list')">List</button>
     </div>
   </div>
 
   <div class="calendar-controls">
     <div class="calendar-nav">
       <button class="btn btn-outline-primary btn-sm" (click)="previousMonth()">
-        <i class="fas fa-chevron-left"></i>
+        <i class="fa fa-chevron-left"></i>
       </button>
       <h2 class="current-month">{{ currentMonthName }} {{ currentYear }}</h2>
       <button class="btn btn-outline-primary btn-sm" (click)="nextMonth()">
-        <i class="fas fa-chevron-right"></i>
+        <i class="fa fa-chevron-right"></i>
       </button>
     </div>
-    <div class="view-options">
-      <button class="btn btn-outline-secondary btn-sm active">Month</button>
-      <button class="btn btn-outline-secondary btn-sm">Week</button>
-      <button class="btn btn-outline-secondary btn-sm">List</button>
+    <div class="action-buttons">
+      <button class="btn btn-primary" (click)="openContentCreation()">
+        <i class="fa fa-plus mr-1"></i> Create Content
+      </button>
     </div>
   </div>
 
@@ -38,33 +35,102 @@
     <div class="calendar-body">
       <div *ngFor="let week of calendarDays" class="calendar-week">
         <div *ngFor="let day of week" class="calendar-day" 
-             [ngClass]="{'current-month': day.currentMonth, 'today': day.isToday}">
+             [ngClass]="{'current-month': day.currentMonth, 'today': day.isToday}"
+             (click)="openContentCreation(day.date)">
           <div class="day-header">
             <span class="day-number">{{ day.date.getDate() }}</span>
-            <button *ngIf="day.currentMonth" class="add-content-btn" 
-                    (click)="openContentCreation(day.date)">
-              <i class="fas fa-plus"></i>
-            </button>
           </div>
           
           <div class="day-content">
             <div *ngFor="let post of getPostsForDate(day.date)" 
                  class="content-item post-item"
-                 (click)="editPost(post.id)">
+                 (click)="editPost(post.id, $event)">
               <div class="item-time">{{ formatTime(post.scheduledAt) }}</div>
-              <div class="item-title">{{ post.caption }}</div>
+              <div class="item-title">{{ post.caption | truncate:20 }}</div>
               <div class="item-type">Post</div>
             </div>
             
             <div *ngFor="let story of getStoriesForDate(day.date)" 
                  class="content-item story-item"
-                 (click)="editStory(story.id)">
+                 (click)="editStory(story.id, $event)">
               <div class="item-time">{{ formatTime(story.scheduledAt) }}</div>
-              <div class="item-title">{{ story.caption }}</div>
+              <div class="item-title">{{ story.caption || '' | truncate:20 }}</div>
               <div class="item-type">Story</div>
+            </div>
+            
+            <div *ngFor="let reel of getReelsForDate(day.date)" 
+                 class="content-item reel-item"
+                 (click)="editReel(reel.id, $event)">
+              <div class="item-time">{{ formatTime(reel.scheduledAt) }}</div>
+              <div class="item-title">{{ reel.caption | truncate:20 }}</div>
+              <div class="item-type">Reel</div>
             </div>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Content Creation Modal -->
+<div class="modal" [class.show]="showContentModal" *ngIf="showContentModal">
+  <div class="modal-backdrop" (click)="closeContentModal()"></div>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">Create New Content</h3>
+        <button type="button" class="close-btn" (click)="closeContentModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="contentForm">
+          <div class="form-group">
+            <label>Selected Date</label>
+            <div class="selected-date">{{ formatDate(selectedDate) }}</div>
+          </div>
+          
+          <div class="form-group">
+            <label>Content Type</label>
+            <div class="content-type-options">
+              <div class="content-type-option" 
+                   [class.active]="contentForm.get('contentType')?.value === 'post'"
+                   (click)="selectContentType('post')">
+                <i class="fa fa-image"></i>
+                <span>Post</span>
+              </div>
+              <div class="content-type-option"
+                   [class.active]="contentForm.get('contentType')?.value === 'story'"
+                   (click)="selectContentType('story')">
+                <i class="fa fa-circle"></i>
+                <span>Story</span>
+              </div>
+              <div class="content-type-option"
+                   [class.active]="contentForm.get('contentType')?.value === 'reel'"
+                   (click)="selectContentType('reel')">
+                <i class="fa fa-film"></i>
+                <span>Reel</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="caption">Caption</label>
+            <textarea 
+              id="caption" 
+              formControlName="caption" 
+              class="form-control" 
+              rows="3"
+              placeholder="Write your caption here..."></textarea>
+          </div>
+          
+          <div class="form-group">
+            <label>Time</label>
+            <input type="time" formControlName="time" class="form-control">
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" (click)="closeContentModal()">Cancel</button>
+        <button type="button" class="btn btn-primary" (click)="createContent()">Create</button>
       </div>
     </div>
   </div>

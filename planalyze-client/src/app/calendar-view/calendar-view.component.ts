@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { ContentCalendarService } from '../../services/content-calendar.service';
 import { CommonModule } from '@angular/common';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { TruncatePipe } from '../../pipes/truncate.pipe';
 
 type Post = {
   id: string;
@@ -52,7 +54,7 @@ type Story = {
 @Component({
   selector: 'app-calendar-view',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ReactiveFormsModule, TruncatePipe],
   templateUrl: './calendar-view.component.html',
   styleUrl: './calendar-view.component.scss'
 })
@@ -63,14 +65,28 @@ export class CalendarViewComponent {
   currentDate = new Date();
   currentMonth = this.currentDate.getMonth();
   currentYear = this.currentDate.getFullYear();
+  currentView = 'month';
   
   posts: Post[] = [];
   stories: Story[] = [];
+  reels: any[] = []; // Add reels type later
+  
+  // Modal properties
+  showContentModal = false;
+  selectedDate: Date = new Date();
+  contentForm!: FormGroup;
   
   constructor(
     private router: Router,
-    private calendarService: ContentCalendarService
-  ) { }
+    private calendarService: ContentCalendarService,
+    private formBuilder: FormBuilder
+  ) {
+    this.contentForm = this.formBuilder.group({
+      contentType: ['post', Validators.required],
+      caption: [''],
+      time: ['12:00']
+    });
+  }
   
   ngOnInit(): void {
     this.loadCalendarData();
@@ -79,6 +95,11 @@ export class CalendarViewComponent {
   
   get currentMonthName(): string {
     return new Date(this.currentYear, this.currentMonth, 1).toLocaleString('default', { month: 'long' });
+  }
+  
+  setView(view: string): void {
+    this.currentView = view;
+    // Implement different view logic here
   }
   
   previousMonth(): void {
@@ -145,7 +166,6 @@ export class CalendarViewComponent {
   }
   
   loadCalendarData(): void {
-    // In a real app, you would load data from your service
     const startDate = new Date(this.currentYear, this.currentMonth, 1);
     const endDate = new Date(this.currentYear, this.currentMonth + 1, 0);
     
@@ -154,6 +174,7 @@ export class CalendarViewComponent {
     //     data => {
     //       this.posts = data.posts;
     //       this.stories = data.stories;
+    //       this.reels = data.reels || [];
     //     },
     //     error => {
     //       console.error('Error loading calendar data', error);
@@ -162,6 +183,7 @@ export class CalendarViewComponent {
   }
   
   getPostsForDate(date: Date): Post[] {
+    
     return this.posts.filter(post => post.scheduledAt && this.isSameDate(new Date(post.scheduledAt), date));
   }
   
@@ -169,37 +191,104 @@ export class CalendarViewComponent {
     return this.stories.filter(story => story.scheduledAt && this.isSameDate(new Date(story.scheduledAt), date));
   }
   
+  getReelsForDate(date: Date): any[] {
+    return this.reels.filter(reel => this.isSameDate(new Date(reel.scheduledAt), date));
+  }
+  
   formatTime(dateTimeString: string | null): string {
-    if (!dateTimeString) return '';
-    
-    const date = new Date(dateTimeString);
-    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-  }
-  
-  openContentCreation(date: Date): void {
-    // Open a modal or dialog to choose between post and story
-    const contentType = window.confirm('Create a post? Click Cancel to create a story instead.') ? 'post' : 'story';
-    
-    if (contentType === 'post') {
-      this.router.navigate(['/app/post/new'], { 
-        queryParams: { 
-          date: date.toISOString().split('T')[0] 
-        } 
-      });
-    } else {
-      this.router.navigate(['/app/story/new'], { 
-        queryParams: { 
-          date: date.toISOString().split('T')[0] 
-        } 
-      });
+    if (dateTimeString) {
+      const date = new Date(dateTimeString);
+      return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     }
+    return '';
   }
   
-  editPost(id: string): void {
+  formatDate(date: Date): string {
+    return date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+  }
+  
+  openContentCreation(date?: Date): void {
+    this.selectedDate = date || new Date();
+    this.showContentModal = true;
+    
+    // Set default time to current time rounded to nearest half hour
+    const now = new Date();
+    const hours = now.getHours();
+    const minutes = now.getMinutes() >= 30 ? 30 : 0;
+    const timeString = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+    
+    this.contentForm.patchValue({
+      contentType: 'post',
+      caption: '',
+      time: timeString
+    });
+  }
+  
+  closeContentModal(): void {
+    this.showContentModal = false;
+  }
+  
+  selectContentType(type: string): void {
+    this.contentForm.patchValue({
+      contentType: type
+    });
+  }
+  
+  createContent(): void {
+    const formValue = this.contentForm.value;
+    const scheduledDateTime = new Date(this.selectedDate);
+    const [hours, minutes] = formValue.time.split(':').map(Number);
+    
+    scheduledDateTime.setHours(hours, minutes, 0, 0);
+    
+    const contentData = {
+      caption: formValue.caption,
+      scheduledAt: scheduledDateTime.toISOString(),
+      status: 'scheduled'
+    };
+    
+    switch (formValue.contentType) {
+      case 'post':
+        this.router.navigate(['/app/post/new'], { 
+          queryParams: { 
+            date: scheduledDateTime.toISOString(),
+            caption: formValue.caption
+          } 
+        });
+        break;
+      case 'story':
+        this.router.navigate(['/app/story/new'], { 
+          queryParams: { 
+            date: scheduledDateTime.toISOString(),
+            caption: formValue.caption
+          } 
+        });
+        break;
+      case 'reel':
+        this.router.navigate(['/app/reel/new'], { 
+          queryParams: { 
+            date: scheduledDateTime.toISOString(),
+            caption: formValue.caption
+          } 
+        });
+        break;
+    }
+    
+    this.closeContentModal();
+  }
+  
+  editPost(id: string, event: MouseEvent): void {
+    event.stopPropagation(); // Prevent calendar day click
     this.router.navigate([`/app/post/edit/${id}`]);
   }
   
-  editStory(id: string): void {
+  editStory(id: string, event: MouseEvent): void {
+    event.stopPropagation(); // Prevent calendar day click
     this.router.navigate([`/app/story/edit/${id}`]);
+  }
+  
+  editReel(id: string, event: MouseEvent): void {
+    event.stopPropagation(); // Prevent calendar day click
+    this.router.navigate([`/app/reel/edit/${id}`]);
   }
 }

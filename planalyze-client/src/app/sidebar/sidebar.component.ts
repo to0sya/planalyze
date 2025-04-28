@@ -20,19 +20,19 @@ interface MenuItem {
 export class SidebarComponent {
   isCollapsed = false;
   menuItems: MenuItem[] = [
-    { label: 'Content Calendar', icon: 'fa-calendar-alt', route: '/app/calendar', active: false },
+    { label: 'Content Calendar', icon: 'fa-calendar', route: '/app/calendar', active: false },
     { label: 'New Post', icon: 'fa-image', route: '/app/post/new', active: false },
     { label: 'New Story', icon: 'fa-circle', route: '/app/story/new', active: false },
-    { label: 'Analytics', icon: 'fa-chart-line', route: '/app/analytics', active: false },
+    { label: 'Analytics', icon: 'fa-line-chart', route: '/app/analytics', active: false },
     { label: 'Ad Targeting', icon: 'fa-bullseye', route: '/app/ad-targeting', active: false },
   ];
   
   constructor(private router: Router) {
-    // this.router.events.pipe(
-    //   filter(event => event instanceof NavigationEnd)
-    // ).subscribe((event: NavigationEnd) => {
-    //   this.updateActiveMenuItem(event.url);
-    // });
+    this.router.events.pipe(
+      filter((event): event is NavigationEnd => event instanceof NavigationEnd)
+    ).subscribe((event) => {
+      this.updateActiveMenuItem(event.urlAfterRedirects);
+    });
   }
   
   toggleCollapse(): void {
