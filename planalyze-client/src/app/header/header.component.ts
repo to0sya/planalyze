@@ -12,7 +12,7 @@ import { CommonModule } from '@angular/common';
 })
 export class HeaderComponent {
   userMenuOpen = false;
-  userName = '';
+  userName = 'planalyze.ig';
   
   constructor(
     private authService: AuthService,

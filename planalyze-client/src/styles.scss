@@ -150,30 +150,6 @@ p {
   margin-left: auto;
 }
 
-@media (min-width: $breakpoint-sm) {
-  .container {
-    max-width: 540px;
-  }
-}
-
-@media (min-width: $breakpoint-md) {
-  .container {
-    max-width: 720px;
-  }
-}
-
-@media (min-width: $breakpoint-lg) {
-  .container {
-    max-width: 960px;
-  }
-}
-
-@media (min-width: $breakpoint-xl) {
-  .container {
-    max-width: 1140px;
-  }
-}
-
 .text-primary { color: $primary !important; }
 .bg-primary { background-color: $primary !important; }
 .border-primary { border-color: $primary !important; }
